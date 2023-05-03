@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build",
+    "prepare": "husky install",
+    "linter": "eslint .",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk"
   },
   "author": "Yash Kulshrestha",
   "license": "MIT",
