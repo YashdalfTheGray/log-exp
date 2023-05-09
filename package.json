@@ -12,10 +12,15 @@
     "cdk": "cdk"
   },
   "author": "Yash Kulshrestha",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YashdalfTheGray/log-exp.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "@aws-sdk/client-cloudwatch": "^3.329.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.329.0",
+    "@faker-js/faker": "^7.6.0",
     "aws-cdk": "^2.78.0",
     "aws-cdk-lib": "^2.78.0",
     "constructs": "^10.2.17",
