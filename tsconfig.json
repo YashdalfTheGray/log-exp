@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "commonjs",
     "isolatedModules": false,
     "jsx": "react",
     "experimentalDecorators": true,
