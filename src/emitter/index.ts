@@ -3,6 +3,7 @@ dotenv.config();
 
 import { CloudWatchLogs } from '@aws-sdk/client-cloudwatch-logs';
 import { CloudWatch } from '@aws-sdk/client-cloudwatch';
+import { EC2, DescribeRegionsCommand, Region } from '@aws-sdk/client-ec2';
 
 const {
   AWS_ACCESS_KEY_ID,
@@ -32,16 +33,13 @@ const commonConfig = {
   },
 };
 
-const cwlClient = new CloudWatchLogs(commonConfig);
-const cwmClient = new CloudWatch(commonConfig);
-
 function checkVars(
   ...varsToCheck: { name: string; value: string | undefined }[]
 ) {
   const undefinedVars = varsToCheck
-    .map((n, v) => {
-      if (!v) {
-        console.error('Environment variable %s not defined', n);
+    .map(({ name, value }) => {
+      if (!value) {
+        console.error('Environment variable %s not defined', name);
         return false;
       }
       return true;
@@ -52,3 +50,25 @@ function checkVars(
     process.exit(1);
   }
 }
+
+function generateRandomJson() {}
+
+async function getAllAvailableRegions(client: EC2) {
+  try {
+    const command = new DescribeRegionsCommand({ AllRegions: false });
+    const { Regions: regions } = await client.send(command);
+    return regions!.map((r) => r.RegionName);
+  } catch (e) {
+    console.error('Something went wrong', e);
+    return [] as Region[];
+  }
+}
+
+(async () => {
+  const cwlClient = new CloudWatchLogs(commonConfig);
+  const cwmClient = new CloudWatch(commonConfig);
+  const ec2Client = new EC2(commonConfig);
+
+  const allRegions = await getAllAvailableRegions(ec2Client);
+  console.log(allRegions);
+})();
