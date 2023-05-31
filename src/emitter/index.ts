@@ -1,8 +1,11 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { CloudWatchLogs } from '@aws-sdk/client-cloudwatch-logs';
-import { CloudWatch } from '@aws-sdk/client-cloudwatch';
+import {
+  CloudWatchLogs,
+  CloudWatchLogsClientConfig,
+} from '@aws-sdk/client-cloudwatch-logs';
+import { CloudWatch, CloudWatchClientConfig } from '@aws-sdk/client-cloudwatch';
 import { EC2, DescribeRegionsCommand, Region } from '@aws-sdk/client-ec2';
 
 const {
@@ -12,6 +15,8 @@ const {
   AWS_REGION,
   AWS_LOGGROUP_NAME,
   AWS_LOGGROUP_REGION,
+  AWS_CUSTOM_METRIC_NAME,
+  AWS_CUSTOM_METRIC_REGION,
   EMIT_INTERVAL_IN_MINUTES,
 } = process.env;
 
@@ -20,7 +25,9 @@ checkVars(
   { name: 'AWS_SECRET_ACCESS_KEY', value: AWS_SECRET_ACCESS_KEY },
   { name: 'AWS_REGION', value: AWS_REGION },
   { name: 'AWS_LOGGROUP_NAME', value: AWS_LOGGROUP_NAME },
-  { name: 'AWS_LOGGROUP_REGION', value: AWS_LOGGROUP_REGION }
+  { name: 'AWS_LOGGROUP_REGION', value: AWS_LOGGROUP_REGION },
+  { name: 'AWS_CUSTOM_METRIC_NAME', value: AWS_CUSTOM_METRIC_NAME },
+  { name: 'AWS_CUSTOM_METRIC_REGION', value: AWS_CUSTOM_METRIC_REGION }
 );
 
 const emitIntervalInMinutes =
@@ -67,8 +74,16 @@ async function getAllAvailableRegions(client: EC2) {
 }
 
 (async () => {
-  const cwlClient = new CloudWatchLogs(commonConfig);
-  const cwmClient = new CloudWatch(commonConfig);
+  const cwlClient = new CloudWatchLogs(
+    Object.assign({}, commonConfig, {
+      region: AWS_LOGGROUP_REGION,
+    } as CloudWatchLogsClientConfig)
+  );
+  const cwmClient = new CloudWatch(
+    Object.assign({}, commonConfig, {
+      region: AWS_CUSTOM_METRIC_REGION,
+    } as CloudWatchClientConfig)
+  );
   const ec2Client = new EC2(commonConfig);
 
   const allRegions = await getAllAvailableRegions(ec2Client);
