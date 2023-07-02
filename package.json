@@ -22,7 +22,7 @@
     "@aws-sdk/client-cloudwatch": "^3.329.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.329.0",
     "@aws-sdk/client-ec2": "^3.329.0",
-    "@faker-js/faker": "^7.6.0",
+    "@faker-js/faker": "^8.0.2",
     "@types/node": "^20.1.1",
     "aws-cdk": "^2.78.0",
     "aws-cdk-lib": "^2.78.0",
