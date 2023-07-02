@@ -1,23 +1,32 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { checkVars } from './utils';
+import { checkVars, generateRandomJsonPayload } from './utils';
 import { getEc2Client, getAllAvailableRegions } from './aws';
 
 const {
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY,
-  AWS_SESSION_TOKEN,
   AWS_REGION,
   AWS_LOGGROUP_NAME,
   AWS_LOGGROUP_REGION,
   AWS_CUSTOM_METRIC_NAME,
   AWS_CUSTOM_METRIC_REGION,
-  EMIT_INTERVAL_IN_MINUTES,
+  EMIT_INTERVAL_IN_SECONDS,
   SHADOW,
 } = process.env;
 
+const emitIntervalInMs =
+  (parseInt(EMIT_INTERVAL_IN_SECONDS!, 10) || 10 * 60) * 1000;
+
 if (SHADOW == 'true') {
+  const interval = setInterval(() => {
+    console.log(JSON.stringify(generateRandomJsonPayload(), null, 2));
+  }, emitIntervalInMs);
+
+  setTimeout(() => {
+    clearInterval(interval);
+  }, emitIntervalInMs * 5);
   process.exit(0);
 }
 
@@ -30,9 +39,6 @@ checkVars(
   { name: 'AWS_CUSTOM_METRIC_NAME', value: AWS_CUSTOM_METRIC_NAME },
   { name: 'AWS_CUSTOM_METRIC_REGION', value: AWS_CUSTOM_METRIC_REGION }
 );
-
-const emitIntervalInMinutes =
-  parseInt(EMIT_INTERVAL_IN_MINUTES!, 10) || 10 * 60 * 1000;
 
 (async () => {
   const ec2Client = getEc2Client();
