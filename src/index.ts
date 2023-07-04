@@ -19,7 +19,8 @@ const {
 const emitIntervalInMs =
   (parseInt(EMIT_INTERVAL_IN_SECONDS!, 10) || 10 * 60) * 1000;
 
-if (SHADOW == 'true') {
+if (SHADOW === 'true') {
+  console.log('Running in shadow mode, just printing out random payloads');
   const interval = setInterval(() => {
     console.log(JSON.stringify(generateRandomJsonPayload(), null, 2));
   }, emitIntervalInMs);
@@ -27,6 +28,7 @@ if (SHADOW == 'true') {
   setTimeout(() => {
     clearInterval(interval);
   }, emitIntervalInMs * 5);
+  console.log('Finished out printing stuff, existing with 0');
   process.exit(0);
 }
 
