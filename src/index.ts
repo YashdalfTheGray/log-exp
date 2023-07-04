@@ -3,6 +3,7 @@ dotenv.config();
 
 import { checkVars, generateRandomJsonPayload } from './utils';
 import { getEc2Client, getAllAvailableRegions } from './aws';
+import { initTestNames } from './init';
 
 const {
   AWS_ACCESS_KEY_ID,
@@ -19,10 +20,12 @@ const {
 const emitIntervalInMs =
   (parseInt(EMIT_INTERVAL_IN_SECONDS!, 10) || 10 * 60) * 1000;
 
+const testNames = initTestNames();
+
 if (SHADOW === 'true') {
   console.log('Running in shadow mode, just printing out random payloads');
   const interval = setInterval(() => {
-    console.log(JSON.stringify(generateRandomJsonPayload(), null, 2));
+    console.log(JSON.stringify(generateRandomJsonPayload(testNames), null, 2));
   }, emitIntervalInMs);
 
   setTimeout(() => {
