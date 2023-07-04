@@ -6,11 +6,6 @@ const FAILURE = 'FAILURE';
 const ARM = 'aarch64';
 const X86 = 'x86_64';
 
-const testNames = faker.helpers.uniqueArray(
-  () => faker.lorem.slug({ min: 3, max: 6 }),
-  20
-);
-
 const statusThings = [
   { weight: 9, value: SUCCESS },
   { weight: 1, value: FAILURE },
@@ -36,7 +31,7 @@ export function checkVars(
   }
 }
 
-export function generateRandomJsonPayload() {
+export function generateRandomJsonPayload(testNames: string[]) {
   const status = faker.helpers.weightedArrayElement(statusThings);
   return {
     name: faker.helpers.arrayElement(testNames),
