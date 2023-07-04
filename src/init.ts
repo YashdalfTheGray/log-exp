@@ -2,9 +2,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 
 import { faker } from '@faker-js/faker';
 
-export function initTestNames() {
+export function initTestNames(stateFilePath: string) {
   try {
-    const content = readFileSync('state.json', { encoding: 'utf8' });
+    const content = readFileSync(stateFilePath, { encoding: 'utf8' });
     return JSON.parse(content);
   } catch (e) {
     const genTestNames = faker.helpers.uniqueArray(
@@ -12,7 +12,7 @@ export function initTestNames() {
       20
     );
 
-    writeFileSync('state.json', JSON.stringify(genTestNames, null, 2), {
+    writeFileSync(stateFilePath, JSON.stringify(genTestNames, null, 2), {
       encoding: 'utf8',
       flag: 'w',
     });

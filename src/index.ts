@@ -20,7 +20,7 @@ const {
 const emitIntervalInMs =
   (parseInt(EMIT_INTERVAL_IN_SECONDS!, 10) || 10 * 60) * 1000;
 
-const testNames = initTestNames();
+const testNames = initTestNames('state.json');
 
 if (SHADOW === 'true') {
   console.log('Running in shadow mode, just printing out random payloads');
