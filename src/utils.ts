@@ -3,6 +3,8 @@ import { faker } from '@faker-js/faker';
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 const SUCCESS = 'SUCCESS';
 const FAILURE = 'FAILURE';
+const ARM = 'aarch64';
+const X86 = 'x86_64';
 
 const testNames = faker.helpers.uniqueArray(
   () => faker.lorem.slug({ min: 3, max: 6 }),
@@ -13,6 +15,8 @@ const statusThings = [
   { weight: 9, value: SUCCESS },
   { weight: 1, value: FAILURE },
 ];
+
+const platformThings = [ARM, X86];
 
 export function checkVars(
   ...varsToCheck: { name: string; value: string | undefined }[]
@@ -39,7 +43,7 @@ export function generateRandomJsonPayload() {
     status,
     startedTime: Date.now() - FIVE_MINUTES_IN_MS,
     endedTime: Date.now(),
-    platform: 'aarch64',
+    platform: faker.helpers.arrayElement(platformThings),
     error: status === FAILURE ? 'something went wrong' : null,
   };
 }
