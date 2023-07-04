@@ -1,11 +1,18 @@
 import { faker } from '@faker-js/faker';
 
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+const SUCCESS = 'SUCCESS';
+const FAILURE = 'FAILURE';
 
 const testNames = faker.helpers.uniqueArray(
   () => faker.lorem.slug({ min: 3, max: 6 }),
   20
 );
+
+const statusThings = [
+  { weight: 9, value: SUCCESS },
+  { weight: 1, value: FAILURE },
+];
 
 export function checkVars(
   ...varsToCheck: { name: string; value: string | undefined }[]
@@ -26,13 +33,13 @@ export function checkVars(
 }
 
 export function generateRandomJsonPayload() {
-  const status = '';
+  const status = faker.helpers.weightedArrayElement(statusThings);
   return {
     name: faker.helpers.arrayElement(testNames),
     status,
     startedTime: Date.now() - FIVE_MINUTES_IN_MS,
     endedTime: Date.now(),
-    platform: '',
-    error: status ? 'something went wrong' : null,
+    platform: 'aarch64',
+    error: status === FAILURE ? 'something went wrong' : null,
   };
 }
