@@ -2,6 +2,9 @@ import { CloudWatch, CloudWatchClientConfig } from '@aws-sdk/client-cloudwatch';
 import {
   CloudWatchLogs,
   CloudWatchLogsClientConfig,
+  CreateLogStreamCommand,
+  CreateLogStreamCommandOutput,
+  ResourceAlreadyExistsException,
 } from '@aws-sdk/client-cloudwatch-logs';
 import {
   EC2,
@@ -54,5 +57,23 @@ export async function getAllAvailableRegions(client: EC2) {
   } catch (e) {
     console.error('Something went wrong', e);
     return [] as Region[];
+  }
+}
+
+export async function idempotentlyCreateLogStream(
+  client: CloudWatchLogs,
+  logGroupName: string,
+  logStreamName: string
+) {
+  try {
+    const command = new CreateLogStreamCommand({
+      logGroupName,
+      logStreamName,
+    });
+    return client.send(command);
+  } catch (e) {
+    if (!(e instanceof ResourceAlreadyExistsException)) {
+      throw e;
+    }
   }
 }
