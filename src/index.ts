@@ -49,12 +49,13 @@ if (SHADOW === 'true') {
   );
 
   (async () => {
+    const logStreamNameForRegion = `logstream-${AWS_REGION}`;
     const cwmClient = getCloudwatchMetricsClient(AWS_CUSTOM_METRIC_REGION);
     const cwlClient = getCloudwatchLogsClient(AWS_LOGGROUP_REGION);
     await idempotentlyCreateLogStream(
       cwlClient,
       AWS_LOGGROUP_NAME!,
-      `${AWS_REGION}-logstream`
+      logStreamNameForRegion
     );
 
     const interval = setInterval(() => {
