@@ -8,6 +8,8 @@ import {
   idempotentlyCreateLogStream,
 } from './aws';
 import { initTestNames } from './init';
+import { PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
+import { LogEventIngestionError } from './errors';
 
 const {
   AWS_ACCESS_KEY_ID,
@@ -58,12 +60,27 @@ if (SHADOW === 'true') {
       logStreamNameForRegion
     );
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       const logLine = JSON.stringify(
         generateRandomJsonPayload(testNames),
         null,
         2
       );
+
+      const command = new PutLogEventsCommand({
+        logGroupName: AWS_LOGGROUP_NAME!,
+        logStreamName: logStreamNameForRegion,
+        logEvents: [{ timestamp: Date.now(), message: logLine }],
+      });
+
+      try {
+        const response = await cwlClient.send(command);
+        if (response.rejectedLogEventsInfo) {
+          throw new LogEventIngestionError(response.rejectedLogEventsInfo);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }, emitIntervalInMs);
 
     process.on('exit', () => {
