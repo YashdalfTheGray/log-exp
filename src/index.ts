@@ -2,7 +2,11 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { checkVars, generateRandomJsonPayload } from './utils';
-import { getCloudwatchMetricsClient, getCloudwatchLogsClient } from './aws';
+import {
+  getCloudwatchMetricsClient,
+  getCloudwatchLogsClient,
+  idempotentlyCreateLogStream,
+} from './aws';
 import { initTestNames } from './init';
 
 const {
@@ -47,6 +51,11 @@ if (SHADOW === 'true') {
   (async () => {
     const cwmClient = getCloudwatchMetricsClient(AWS_CUSTOM_METRIC_REGION);
     const cwlClient = getCloudwatchLogsClient(AWS_LOGGROUP_REGION);
+    await idempotentlyCreateLogStream(
+      cwlClient,
+      AWS_LOGGROUP_NAME!,
+      `${AWS_REGION}-logstream`
+    );
 
     const interval = setInterval(() => {
       const logLine = JSON.stringify(

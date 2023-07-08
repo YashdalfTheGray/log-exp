@@ -3,7 +3,6 @@ import {
   CloudWatchLogs,
   CloudWatchLogsClientConfig,
   CreateLogStreamCommand,
-  CreateLogStreamCommandOutput,
   ResourceAlreadyExistsException,
 } from '@aws-sdk/client-cloudwatch-logs';
 import {
