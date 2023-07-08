@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { checkVars, generateRandomJsonPayload } from './utils';
-import { getEc2Client, getAllAvailableRegions } from './aws';
+import { getCloudwatchMetricsClient, getCloudwatchLogsClient } from './aws';
 import { initTestNames } from './init';
 
 const {
@@ -45,8 +45,19 @@ if (SHADOW === 'true') {
   );
 
   (async () => {
-    const ec2Client = getEc2Client();
-    const allRegions = await getAllAvailableRegions(ec2Client);
-    console.log(allRegions);
+    const cwmClient = getCloudwatchMetricsClient(AWS_CUSTOM_METRIC_REGION);
+    const cwlClient = getCloudwatchLogsClient(AWS_LOGGROUP_REGION);
+
+    const interval = setInterval(() => {
+      const logLine = JSON.stringify(
+        generateRandomJsonPayload(testNames),
+        null,
+        2
+      );
+    }, emitIntervalInMs);
+
+    process.on('exit', () => {
+      clearInterval(interval);
+    });
   })();
 }
