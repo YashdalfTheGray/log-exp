@@ -67,13 +67,13 @@ if (SHADOW === 'true') {
         2
       );
 
-      const command = new PutLogEventsCommand({
-        logGroupName: AWS_LOGGROUP_NAME!,
-        logStreamName: logStreamNameForRegion,
-        logEvents: [{ timestamp: Date.now(), message: logLine }],
-      });
-
       try {
+        const command = new PutLogEventsCommand({
+          logGroupName: AWS_LOGGROUP_NAME!,
+          logStreamName: logStreamNameForRegion,
+          logEvents: [{ timestamp: Date.now(), message: logLine }],
+        });
+
         const response = await cwlClient.send(command);
         if (response.rejectedLogEventsInfo) {
           throw new LogEventIngestionError(response.rejectedLogEventsInfo);
