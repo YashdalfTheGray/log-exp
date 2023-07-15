@@ -1,11 +1,16 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { checkVars, generateRandomJsonPayload } from './utils';
+import {
+  checkVars,
+  convertStatusToNumber,
+  generateRandomJsonPayload,
+} from './utils';
 import {
   getCloudwatchMetricsClient,
   getCloudwatchLogsClient,
   idempotentlyCreateLogStream,
+  putTestMetric,
 } from './aws';
 import { initTestNames } from './init';
 import { PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
@@ -25,6 +30,7 @@ const {
 
 const emitIntervalInMs =
   (parseInt(EMIT_INTERVAL_IN_SECONDS!, 10) || 10 * 60) * 1000;
+const metricNamespace = 'TestLogMetrics';
 
 const testNames = initTestNames('state.json');
 
@@ -61,11 +67,8 @@ if (SHADOW === 'true') {
     );
 
     const interval = setInterval(async () => {
-      const logLine = JSON.stringify(
-        generateRandomJsonPayload(testNames),
-        null,
-        2
-      );
+      const payload = generateRandomJsonPayload(testNames);
+      const logLine = JSON.stringify(payload, null, 2);
 
       try {
         const command = new PutLogEventsCommand({
@@ -81,6 +84,16 @@ if (SHADOW === 'true') {
       } catch (e) {
         console.error(e);
       }
+
+      try {
+        const response = await putTestMetric(
+          cwmClient,
+          metricNamespace,
+          payload.name,
+          convertStatusToNumber(payload.status),
+          new Date(payload.endedTime)
+        );
+      } catch (e) {}
     }, emitIntervalInMs);
 
     process.on('exit', () => {
