@@ -42,3 +42,14 @@ export function generateRandomJsonPayload(testNames: string[]) {
     error: status === FAILURE ? 'something went wrong' : null,
   };
 }
+
+export function convertStatusToNumber(status: string) {
+  switch (status) {
+    case SUCCESS:
+      return 1;
+    case FAILURE:
+      return 0;
+    default:
+      return -1;
+  }
+}
