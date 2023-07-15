@@ -1,4 +1,9 @@
-import { CloudWatch, CloudWatchClientConfig } from '@aws-sdk/client-cloudwatch';
+import {
+  CloudWatch,
+  CloudWatchClientConfig,
+  PutMetricDataCommand,
+  StandardUnit,
+} from '@aws-sdk/client-cloudwatch';
 import {
   CloudWatchLogs,
   CloudWatchLogsClientConfig,
@@ -75,4 +80,24 @@ export async function idempotentlyCreateLogStream(
       throw e;
     }
   }
+}
+
+export async function putTestMetric(
+  client: CloudWatch,
+  metricNamespace: string,
+  metricName: string,
+  value: number,
+  timestamp: Date
+) {
+  const command = new PutMetricDataCommand({
+    Namespace: metricNamespace,
+    MetricData: [
+      {
+        MetricName: metricName,
+        Value: value,
+        Unit: StandardUnit.None,
+        Timestamp: timestamp,
+      },
+    ],
+  });
 }
