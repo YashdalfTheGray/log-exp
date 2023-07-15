@@ -100,4 +100,6 @@ export async function putTestMetric(
       },
     ],
   });
+
+  return client.send(command);
 }
