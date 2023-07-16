@@ -22,7 +22,7 @@ const {
   AWS_REGION,
   AWS_LOGGROUP_NAME,
   AWS_LOGGROUP_REGION,
-  AWS_CUSTOM_METRIC_NAME,
+  AWS_CUSTOM_METRIC_NAMESPACE,
   AWS_CUSTOM_METRIC_REGION,
   EMIT_INTERVAL_IN_SECONDS,
   SHADOW,
@@ -30,7 +30,6 @@ const {
 
 const emitIntervalInMs =
   (parseInt(EMIT_INTERVAL_IN_SECONDS!, 10) || 10 * 60) * 1000;
-const metricNamespace = 'TestLogMetrics';
 
 const testNames = initTestNames('state.json');
 
@@ -52,7 +51,7 @@ if (SHADOW === 'true') {
     { name: 'AWS_REGION', value: AWS_REGION },
     { name: 'AWS_LOGGROUP_NAME', value: AWS_LOGGROUP_NAME },
     { name: 'AWS_LOGGROUP_REGION', value: AWS_LOGGROUP_REGION },
-    { name: 'AWS_CUSTOM_METRIC_NAME', value: AWS_CUSTOM_METRIC_NAME },
+    { name: 'AWS_CUSTOM_METRIC_NAMESPACE', value: AWS_CUSTOM_METRIC_NAMESPACE },
     { name: 'AWS_CUSTOM_METRIC_REGION', value: AWS_CUSTOM_METRIC_REGION }
   );
 
@@ -88,7 +87,7 @@ if (SHADOW === 'true') {
       try {
         const response = await putTestMetric(
           cwmClient,
-          metricNamespace,
+          AWS_CUSTOM_METRIC_NAMESPACE!,
           payload.name,
           convertStatusToNumber(payload.status),
           new Date(payload.endedTime)
