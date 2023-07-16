@@ -85,14 +85,16 @@ if (SHADOW === 'true') {
       }
 
       try {
-        const response = await putTestMetric(
+        await putTestMetric(
           cwmClient,
           AWS_CUSTOM_METRIC_NAMESPACE!,
           payload.name,
           convertStatusToNumber(payload.status),
           new Date(payload.endedTime)
         );
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     }, emitIntervalInMs);
 
     process.on('exit', () => {
